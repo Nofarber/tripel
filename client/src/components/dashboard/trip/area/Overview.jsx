@@ -62,14 +62,14 @@ function Overview() {
                 ) : allShownDays ? (
                   <>
                     {allShownDays.map((day, index) => {
-                      const num=allShownDays.length-index
+                      // const num=allShownDays.length-index
                       return (
                         <div
                           key={index}
                           className="outlined-card overview-card"
                         >
                           <h4 className="bold">
-                            Day #{num}{" "}
+                            Day #{index + 1}{" "}
                             <span>
                               {format(day.day, "EEEE, MMMM do, yyyy")}
                             </span>

@@ -81,9 +81,7 @@ export const CurrentContextProvider = ({ children }) => {
       const newId = JSON.parse(localStorage.getItem("currentTrip"));
       const response = await getItem("trip", newId);
       setCurrentTrip(response.data);
-    } else {
-      console.log("3");
-    }
+    } 
   };
 
   const saveAreaLocally = async (areaData) => {
@@ -95,9 +93,7 @@ export const CurrentContextProvider = ({ children }) => {
       const newId = JSON.parse(localStorage.getItem("currentArea"));
       const response = await getItem("area", newId);
       setCurrentArea(response.data);
-    } else {
-      console.log("3");
-    }
+    } 
   };
   const saveHotelLocally = async (hotelData) => {
     const myItem = localStorage.getItem("currentHotel");
@@ -108,9 +104,7 @@ export const CurrentContextProvider = ({ children }) => {
       const newId = JSON.parse(localStorage.getItem("currentHotel"));
       const response = await getItem("hotel", newId);
       setCurrentHotel(response.data);
-    } else {
-      console.log("3");
-    }
+    } 
   };
   const saveFlightLocally = async (flightData) => {
     console.log(flightData);
@@ -122,11 +116,7 @@ export const CurrentContextProvider = ({ children }) => {
       const newId=JSON.parse(localStorage.getItem("currentFlight"));
       const response = await getItem("flight", newId)
       setCurrentFlight(response.data)
-    }
-    else{
-
-      console.log("3");
-    }
+    } 
   };
   const saveDayLocally = async (dayData) => {
     // Check if dayData is not undefined or null before proceeding
@@ -139,9 +129,7 @@ export const CurrentContextProvider = ({ children }) => {
         const newId = JSON.parse(localStorage.getItem("currentDay"));
         const response = await getItem("day", newId);
         setCurrentDay(response.data);
-      } else {
-        console.log("3");
-      }
+      } 
     } else {
       console.log("dayData is undefined or null");
     }
