@@ -150,6 +150,7 @@ function TripPlanner() {
 
   const handleDate = (event) => {
     event.preventDefault()
+    console,log(event.target)
     const selectedDate = new Date(event.target.value);
     setStartDate(selectedDate);
     if (selectedDate > endDate) {
@@ -206,8 +207,8 @@ function TripPlanner() {
   const handleAreaSubmit = (event) => {
     event.preventDefault()
     const areaName=areaNameRef.current.value
-    const startDate=new Date(areaEndRef.current.value)
-    const endDate=new Date(areaStartRef.current.value)
+    const startDate=new Date(areaStartRef.current.value)
+    const endDate=new Date(areaEndRef.current.value)
     setNewArea(areaName)
   
     

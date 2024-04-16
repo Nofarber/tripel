@@ -18,7 +18,6 @@ exports.registerTrip = async (req, res) => {
   try {
     const currentUser = await User.findOne({ where: { id: req.params.id } });
     console.log(req.body, req.params.id);
-    console.log("_________________");
     const tripExists = await Trip.findOne({
       where: { userId: currentUser.id, tripName: req.body.tripName },
     });

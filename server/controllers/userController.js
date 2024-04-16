@@ -196,7 +196,6 @@ exports.autoLogin = async (req, res) => {
       return res.send(false);
     }
     const decoded = jwt.verify(token, secret);
-    console.log(decoded.id);
     const userExists = await User.findByPk(decoded.id);
     if (userExists === undefined) {
       return res.send(false);
