@@ -459,7 +459,7 @@ function TripPlanner() {
                         appElement={document.getElementById("root")}
                         index={index}
                       >
-                        <form onSubmit={handleDate}>
+                        <form className="modal-form" onSubmit={handleDate}>
                           <input
                           ref={areaNameRef}
                             type="text"

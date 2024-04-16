@@ -32,6 +32,12 @@ form {
   box-shadow: -10px 10px 20px 5px var(--text-50);
   border-radius: 0.5rem;
 }
+.modal-form{
+  padding: 0;
+  background-color:transparent;
+  border:none;
+  box-shadow: none;
+}
 .guest-login {
   display: flex;
   flex-direction: column;

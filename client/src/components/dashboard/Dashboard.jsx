@@ -86,8 +86,7 @@ function Dashboard() {
         contentLabel="Choose Trip Data Modal"
         appElement={document.getElementById("root")}
       >
-        <form onSubmit={handleCreateTrip} >
-
+        <form className="modal-form"  onSubmit={handleCreateTrip} >
         <input
           type="text"
           placeholder="Enter Trip Name..."
@@ -99,15 +98,15 @@ function Dashboard() {
           placeholder="Enter Budget..."
           ref={tripInputBudget}
           />
-          <button type="submit"  className="primary-button">
-            Submit
-          </button>
-          </form>
         <div className="modal-buttons">
           <button onClick={closeModal} className="outlined-button">
             Cancel
           </button>
+          <button type="submit"  className="primary-button">
+            Submit
+          </button>
         </div>
+          </form>
       </Modal>
       <div className="trips">
         {!isLoading ? (
