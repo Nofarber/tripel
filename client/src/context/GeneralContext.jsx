@@ -41,11 +41,9 @@ export const GeneralContextProvider = ({ children }) => {
   const [goBack, setGoBack] = useState("");
   const [user, setUser] = useState({});
   const [trips, setTrips] = useState([]);
-  const [hotels, setHotels] = useState([]);
+  const [hotels, setHotels] = useState(localStorage.getItem("hotelsDisplay")?JSON.parse(localStorage.getItem("hotelsDisplay")):[]);
   const [events, setEvents] = useState([]);
- 
   const [search, setSearch] = useState("");
-
   const [myHotels, setMyHotels] = useState([]);
   const [myEvents, setMyEvents] = useState([]);
   const [flights, setFlights] = useState([]);

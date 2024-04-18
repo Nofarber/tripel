@@ -38,8 +38,12 @@ function Hotels() {
   const { currentArea } = useContext(CurrentContext);
   const today = new Date();
   const [date, setdate] = useState({
-    checkIn: today.toISOString().substring(0, 10),
-    checkOut: today.toISOString().substring(0, 10),
+    checkIn: currentArea?.minDate
+      ? currentArea?.minDate.toISOString().substring(0, 10)
+      : today.toISOString().substring(0, 10),
+    checkOut: currentArea?.maxDay
+      ? currentArea?.maxDay.toISOString().substring(0, 10)
+      : today.toISOString().substring(0, 10),
   });
 
   // useEffect
@@ -56,13 +60,15 @@ function Hotels() {
   // Functions
   // Returns the hotels for the current area and time
   async function handleSubmitHotels(search) {
+    console.log(search);
     setIsLoading(true);
     const res = await fetchPlaceLanLon(search);
 
     if (res.region_id && res.coordinates) {
+     
       sendToLocation(res.coordinates);
       const res2 = await fetchNearHotels(res.region_id, date);
-      console.log(res2);
+
       setHotels(res2);
       res2 && localStorage.setItem("hotelsDisplay", JSON.stringify(res2));
       setIsLoading(false);
@@ -80,6 +86,7 @@ function Hotels() {
     setIsOpen(false);
     setExistingHotel(null);
   };
+
 
   return (
     <div>

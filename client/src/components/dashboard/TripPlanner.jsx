@@ -15,7 +15,6 @@ import Modal from "react-modal";
 import { CurrentContext } from "../../context/CurrentContext";
 import { MdEdit } from "react-icons/md";
 import "./dashboard.css";
-
 import { format, addDays, min, max, isAfter, isEqual } from "date-fns";
 import { GrNext } from "react-icons/gr";
 
@@ -198,8 +197,6 @@ function TripPlanner() {
   };
 
   const handleAreaAdd = (index) => {
-    // setCurrentArea(flightsAndAreas[index]);
-    
     openModal(index);
   };
 
@@ -223,7 +220,7 @@ function TripPlanner() {
             areaId: response.data.id,
           })
             .then(() => {
-              // setCurrentArea(response.data.area);
+  
               window.location.reload();
             })
             .catch((err) => console.error(err));
@@ -238,7 +235,7 @@ function TripPlanner() {
             areaId: response.data.area.id,
           })
             .then(() => {
-              // setCurrentArea(response.data.area);
+            
               window.location.reload()
              
             })
