@@ -6,7 +6,7 @@ const Area = sequelize.define('Area',{
       type: DataTypes.STRING,
       allowNull: false,
       trim: true,
-    }
+    },
   })
 
 module.exports = Area;
