@@ -62,7 +62,6 @@ function Overview() {
                 ) : allShownDays ? (
                   <>
                     {allShownDays.map((day, index) => {
-                      // const num=allShownDays.length-index
                       return (
                         <div
                           key={index}

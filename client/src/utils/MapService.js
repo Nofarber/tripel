@@ -20,7 +20,6 @@ export async function fetchPlaceLanLon(place) {
     };
   } catch (error) {
     console.log(error);
-    console.log("fetchPlaceLanLon ");
   }
 }
 

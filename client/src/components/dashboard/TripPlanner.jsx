@@ -150,7 +150,6 @@ function TripPlanner() {
 
   const handleDate = (event) => {
     event.preventDefault()
-    console,log(event.target)
     const selectedDate = new Date(event.target.value);
     setStartDate(selectedDate);
     if (selectedDate > endDate) {
