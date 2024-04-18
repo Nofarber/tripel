@@ -8,26 +8,34 @@ import {
   fetchPlaceLanLon,
 } from "../../../../utils/MapService";
 import hotelPNG from "../../../../assets/image.png";
-import {
-  CreateDateFromMinMax,
-  createItem,
-} from "../../../../utils/CRUDService";
+import HotelCard from "./HotelCard";
+import { getItemsWithFilter } from "../../../../utils/CRUDService";
 import { CurrentContext } from "../../../../context/CurrentContext";
-import { FaCalendarDays } from "react-icons/fa6";
-import placeholderImage from "../../../../assets/placeholder.jpg";
+import Modal from "react-modal";
+import { format } from "date-fns";
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    padding: "2rem 1.5rem",
+    borderRadius: "0.5rem",
+  },
+};
 
 function Hotels() {
   const {
-    isGuest,
-    setUser,
     hotels,
     setHotels,
+    setMyHotels,
     mapRef,
     sendToLocation,
     isLoading,
     setIsLoading,
   } = useContext(GeneralContext);
-  const { currentArea, currentTrip } = useContext(CurrentContext);
+  const { currentArea } = useContext(CurrentContext);
   const today = new Date();
   const [date, setdate] = useState({
     checkIn: currentArea?.minDate
@@ -38,11 +46,19 @@ function Hotels() {
       : today.toISOString().substring(0, 10),
   });
 
+  // useEffect
   useEffect(() => {
     setHotels(JSON.parse(localStorage.getItem("hotelsDisplay")));
     hotels && setIsLoading(false);
-  }, []);
+    getItemsWithFilter("hotel", { areaId: currentArea.id })
+      .then((response) => {
+        setMyHotels(response.data);
+      })
+      .catch((err) => console.error(err));
+  }, [currentArea]);
 
+  // Functions
+  // Returns the hotels for the current area and time
   async function handleSubmitHotels(search) {
     console.log(search);
     setIsLoading(true);
@@ -51,7 +67,6 @@ function Hotels() {
     if (res.region_id && res.coordinates) {
      
       sendToLocation(res.coordinates);
-
       const res2 = await fetchNearHotels(res.region_id, date);
 
       setHotels(res2);
@@ -59,15 +74,19 @@ function Hotels() {
       setIsLoading(false);
     }
   }
-  async function addHotelToTrip(data) {
-    console.log(data);
-    const res = await createItem("hotel", currentArea.id, data);
-   
-    console.log(res.data.hotel.id);
-    await CreateDateFromMinMax(data.checkIn, data.checkOut, currentTrip.id, {
-      hotelId: res.data.hotel.id,
-    });
-  }
+
+  // React-Modal functions and variables
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+  const [existingHotel, setExistingHotel] = useState(null);
+  const openModal = (data) => {
+    setIsOpen(true);
+    setExistingHotel(data);
+  };
+  const closeModal = () => {
+    setIsOpen(false);
+    setExistingHotel(null);
+  };
+
 
   return (
     <div>
@@ -79,42 +98,17 @@ function Hotels() {
           ) : hotels ? (
             hotels.map((hotel, index) => {
               return (
-                <div key={index} className="outlined-card hotel-card">
-                  {hotel.image ? (
-                    <img src={hotel.image} alt="Hotel image" />
-                  ) : (
-                    <img src={placeholderImage} alt="Hotel image" />
-                  )}
-                  <div className="info">
-                    <div>
-                      <h4 className="bold">{hotel.hotelName}</h4>
-                      <div className="dates">
-                        <span>
-                          <FaCalendarDays />
-                          {hotel.checkIn}
-                        </span>
-                        <span>
-                          <FaCalendarDays />
-                          {hotel.checkOut}
-                        </span>
-                      </div>
-
-                      <p>
-                        <b>Total Price:</b> {hotel.price}
-                      </p>
-                    </div>
-                    <button
-                      className="primary-button"
-                      onClick={() => addHotelToTrip(hotel)}
-                    >
-                      Select
-                    </button>
-                  </div>
-                </div>
+                <HotelCard
+                  cardType="outlined-card"
+                  key={index}
+                  hotel={hotel}
+                  index={index}
+                  openModal={openModal}
+                />
               );
             })
           ) : (
-            <p>Location not found, please try again</p>
+            <p>No hotel found within the area, please try again.</p>
           )}
         </div>
         <div className="map-container">
@@ -127,6 +121,42 @@ function Hotels() {
             PNG={hotelPNG}
           />
         </div>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Error message"
+          appElement={document.getElementById("root")}
+        >
+          <form className="modal-form">
+            <div>
+              <h3>Overlapping Hotel Dates</h3>
+              <br />
+              <p>
+                You have selected another hotel within the same dates.
+                <br />
+                If you wish to override the existing hotel,
+                <br />
+                please remove it before selecting a new one.
+              </p>
+              {existingHotel && (
+                <div>
+                  <br />
+                  <div className="overlap-info">
+                    <b>{existingHotel.hotelName}</b>{" "}
+                    <p>
+                      {format(existingHotel.checkIn, "dd/MM/yy")}-
+                      {format(existingHotel.checkOut, "dd/MM/yy")}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <button onClick={closeModal} className="primary-button">
+              Continue
+            </button>
+          </form>
+        </Modal>
       </div>
     </div>
   );

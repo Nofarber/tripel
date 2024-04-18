@@ -31,6 +31,7 @@ function Events() {
     checkIn: today.toISOString().substring(0, 10),
     checkOut: today.toISOString().substring(0, 10),
   });
+  
   useEffect(() => {
     setEvents(JSON.parse(localStorage.getItem("eventsDisplay")));
  getItemsWithFilter("event", { areaId: currentArea.id })

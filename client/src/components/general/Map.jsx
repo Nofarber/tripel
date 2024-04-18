@@ -86,16 +86,17 @@ export default function Map({
       sendToLocation(areaCourdinents.coordinates);
   }
 
+  // TODO: Set the default values of the dates with the area's dates
   //   to search for the first entered location
   useEffect(() => {
     if (search == "" && mapType != "overview") {
       setIsLoading(true);
-      handleSubmit(currentArea.areaName);
+      setSearch(currentArea.areaName || "")
       setIsLoading(false);
     }
-
     mapType === "overview" && currentArea.areaName && fetchCourdinents();
-  }, []);
+  }, [currentArea]);
+
 
   return (
     <>
@@ -105,7 +106,7 @@ export default function Map({
             <input
               type="text"
               placeholder="Enter Location"
-              defaultValue={search == "" ? currentArea?.areaName || "" : search}
+              defaultValue={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <div>

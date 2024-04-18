@@ -264,6 +264,7 @@ a:focus-visible {
 
 .ReactModal__Overlay {
   background-color: hsla(0, 0%, 10%, 0.5) !important;
+  z-index: 5;
 }
 .ReactModal__Content{
   display: flex;
