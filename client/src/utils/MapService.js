@@ -5,14 +5,12 @@ axios.defaults.withCredentials = true;
 
 export async function fetchPlaceLanLon(place) {
   try {
-    console.log(place);
-   
     const res = await axios.get(
       `https://hotels-com-provider.p.rapidapi.com/v2/regions?rapidapi-key=${
         import.meta.env.VITE_RAPID_API_KEY
       }&query=${place}&domain=AE&locale=en_GB`
     );
-    console.log(res.data);
+
 
     return {
       coordinates: res.data.data[1].coordinates,
@@ -20,7 +18,7 @@ export async function fetchPlaceLanLon(place) {
     };
   } catch (error) {
     console.log(error);
-    console.log("fetchPlaceLanLon ");
+    console.log("fetchPlaceLanLon error ");
   }
 }
 

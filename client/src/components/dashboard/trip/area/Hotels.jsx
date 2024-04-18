@@ -30,8 +30,12 @@ function Hotels() {
   const { currentArea, currentTrip } = useContext(CurrentContext);
   const today = new Date();
   const [date, setdate] = useState({
-    checkIn: today.toISOString().substring(0, 10),
-    checkOut: today.toISOString().substring(0, 10),
+    checkIn: currentArea?.minDate
+      ? currentArea?.minDate.toISOString().substring(0, 10)
+      : today.toISOString().substring(0, 10),
+    checkOut: currentArea?.maxDay
+      ? currentArea?.maxDay.toISOString().substring(0, 10)
+      : today.toISOString().substring(0, 10),
   });
 
   useEffect(() => {
@@ -40,14 +44,16 @@ function Hotels() {
   }, []);
 
   async function handleSubmitHotels(search) {
+    console.log(search);
     setIsLoading(true);
     const res = await fetchPlaceLanLon(search);
 
     if (res.region_id && res.coordinates) {
+     
       sendToLocation(res.coordinates);
 
       const res2 = await fetchNearHotels(res.region_id, date);
-      console.log(res2);
+
       setHotels(res2);
       res2 && localStorage.setItem("hotelsDisplay", JSON.stringify(res2));
       setIsLoading(false);
@@ -56,7 +62,7 @@ function Hotels() {
   async function addHotelToTrip(data) {
     console.log(data);
     const res = await createItem("hotel", currentArea.id, data);
-    console.log(res);
+   
     console.log(res.data.hotel.id);
     await CreateDateFromMinMax(data.checkIn, data.checkOut, currentTrip.id, {
       hotelId: res.data.hotel.id,
