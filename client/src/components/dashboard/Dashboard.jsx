@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { GeneralContext } from "../../context/GeneralContext";
 import Skeleton from "react-loading-skeleton";
 import Modal from "react-modal";
-import { createItem, getItemsWithFilter, deleteItem } from "../../utils/CRUDService";
+import {
+  createItem,
+  getItemsWithFilter,
+  deleteItem,
+} from "../../utils/CRUDService";
 import { CurrentContext } from "../../context/CurrentContext";
 import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
@@ -22,8 +26,8 @@ const customStyles = {
 function Dashboard() {
   const { user, setUser, trips, setTrips, isLoading, setIsLoading } =
     useContext(GeneralContext);
-    const tripInputName=useRef()
-    const tripInputBudget=useRef()
+  const tripInputName = useRef();
+  const tripInputBudget = useRef();
   const { currentTrip, setCurrentTrip } = useContext(CurrentContext);
   const { currentUser, setCurrentUser } = useContext(CurrentContext);
   const [tripData, setTripData] = useState({});
@@ -31,21 +35,22 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const handleCreateTrip = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     console.log(tripData);
-   console.log(tripInputBudget.current.value +"   "+tripInputName.current.value);
-   const tripName=tripInputName.current.value
-   const Budget=tripInputBudget.current.value
-    createItem("trip", user.id, {tripName,Budget})
+    console.log(
+      tripInputBudget.current.value + "   " + tripInputName.current.value
+    );
+    const tripName = tripInputName.current.value;
+    const Budget = tripInputBudget.current.value;
+    createItem("trip", user.id, { tripName, Budget })
       .then((response) => {
         setCurrentTrip(response.data);
         navigate("trip-planner");
       })
       .catch((err) => console.log(err));
   };
-  
 
-  const handlePlanTrip = async(index) => {
+  const handlePlanTrip = async (index) => {
     console.log(index);
     if (index === -1) {
       setCurrentTrip({});
@@ -56,14 +61,12 @@ function Dashboard() {
     }
     navigate("trip-planner");
   };
-    const handleRemoveTrip = (index, id) => {
-      const newTrips = [...trips];
-      newTrips.splice(index, 1);
-      setTrips(newTrips);
-      deleteItem("trip", id);
-   }
-
-
+  const handleRemoveTrip = (index, id) => {
+    const newTrips = [...trips];
+    newTrips.splice(index, 1);
+    setTrips(newTrips);
+    deleteItem("trip", id);
+  };
 
   useEffect(() => {
     getItemsWithFilter("trip", { userId: currentUser })
@@ -97,27 +100,26 @@ function Dashboard() {
         contentLabel="Choose Trip Data Modal"
         appElement={document.getElementById("root")}
       >
-        <form className="modal-form"  onSubmit={handleCreateTrip} >
-        <input
-          type="text"
-          placeholder="Enter Trip Name..."
-          ref={tripInputName}
-         
+        <form className="modal-form" onSubmit={handleCreateTrip}>
+          <input
+            type="text"
+            placeholder="Enter Trip Name..."
+            ref={tripInputName}
           />
-        <input
-          type="number"
-          placeholder="Enter Budget..."
-          ref={tripInputBudget}
+          <input
+            type="number"
+            placeholder="Enter Budget..."
+            ref={tripInputBudget}
           />
-        <div className="modal-buttons">
-          <button onClick={closeModal} className="outlined-button">
-            Cancel
-          </button>
-          <button type="submit"  className="primary-button">
-            Submit
-          </button>
-        </div>
-          </form>
+          <div className="modal-buttons">
+            <button onClick={closeModal} className="outlined-button">
+              Cancel
+            </button>
+            <button type="submit" className="primary-button">
+              Submit
+            </button>
+          </div>
+        </form>
       </Modal>
       <div className="trips">
         {!isLoading ? (
@@ -130,21 +132,18 @@ function Dashboard() {
               >
                 <h2>{trip.tripName}</h2>
                 <button
-                            className="outlined-button edit icon"
-                            onClick={(event) => handlePlanTrip(index)}
-                          >
-                            <MdEdit />
+                  className="outlined-button edit icon"
+                  onClick={(event) => handlePlanTrip(index)}
+                >
+                  <MdEdit />
                 </button>
                 <button
                   className="delete-button icon small-card"
-                  onClick={() =>
-                  handleRemoveTrip(index, trip.id)
-                  }
+                  onClick={() => handleRemoveTrip(index, trip.id)}
                 >
-                            <FaTrash />
+                  <FaTrash />
                 </button>
               </div>
-              
             ))
           ) : (
             <p>You haven't planned any trips yet</p>
