@@ -17,6 +17,8 @@ export const CurrentContext = createContext({
   setCurrentDay: () => {},
   currentLogo: null,
   setCurrentLogo: () => {},
+  currentUser: {},
+  setCurrentUser: () => {},
 });
 
 export const CurrentContextProvider = ({ children }) => {
@@ -26,9 +28,11 @@ export const CurrentContextProvider = ({ children }) => {
   const [currentFlight, setCurrentFlight] = useState({});
   const [currentDay, setCurrentDay] = useState({});
   const [currentLogo, setCurrentLogo] = useState(null);
+  const [currentUser, setCurrentUser] = useState({});
 
   useEffect(() => {
     saveTripLocally({});
+    saveUserLocally({})
     const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)");
     if (isDarkMode.matches) {
       setCurrentLogo(darkLogo);
@@ -45,6 +49,7 @@ export const CurrentContextProvider = ({ children }) => {
       const hotelId = localStorage.getItem("currentHotel");
       const flightId = localStorage.getItem("currentFlight");
       const dayId = localStorage.getItem("currentDay");
+      const userId = localStorage.getItem("currentUser");
 
       // Load each piece of state if it exists in localStorage
       if (tripId) {
@@ -67,10 +72,26 @@ export const CurrentContextProvider = ({ children }) => {
         const response = await getItem("day", dayId);
         setCurrentDay(response.data);
       }
+      if(userId){
+        const response = await getItem("users", userId);
+        setCurrentUser(response.data.id);
+      }
     };
 
     loadInitialState();
   }, []);
+
+  const saveUserLocally = async (userData) => {
+    const myItem = localStorage.getItem("currentUser");
+    if (userData !== 0) {
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      setCurrentUser(userData);
+    } else if (myItem !== "undefined") {
+      const newId = JSON.parse(localStorage.getItem("currentUser"));
+      const response = await getItem("user", newId);
+      setCurrentUser(response.data);
+    } 
+  }
 
   const saveTripLocally = async (tripData) => {
     const myItem = localStorage.getItem("currentTrip");
@@ -83,6 +104,7 @@ export const CurrentContextProvider = ({ children }) => {
       setCurrentTrip(response.data);
     } 
   };
+
 
   const saveAreaLocally = async (areaData) => {
     const myItem = localStorage.getItem("currentArea");
@@ -147,8 +169,11 @@ export const CurrentContextProvider = ({ children }) => {
     setCurrentFlight: saveFlightLocally,
     currentDay,
     setCurrentDay: saveDayLocally,
+    currentUser,
+    setCurrentUser: saveUserLocally,
     currentLogo,
     setCurrentLogo,
+   
   };
   return (
     <CurrentContext.Provider value={contextValue}>

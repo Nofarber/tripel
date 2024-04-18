@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { GeneralContext } from "../../context/GeneralContext";
 import Skeleton from "react-loading-skeleton";
 import Modal from "react-modal";
-import { createItem, getItemsWithFilter } from "../../utils/CRUDService";
+import { createItem, getItemsWithFilter, deleteItem } from "../../utils/CRUDService";
 import { CurrentContext } from "../../context/CurrentContext";
+import { MdEdit } from "react-icons/md";
+import { FaTrash } from "react-icons/fa";
 
 const customStyles = {
   content: {
@@ -23,6 +25,7 @@ function Dashboard() {
     const tripInputName=useRef()
     const tripInputBudget=useRef()
   const { currentTrip, setCurrentTrip } = useContext(CurrentContext);
+  const { currentUser, setCurrentUser } = useContext(CurrentContext);
   const [tripData, setTripData] = useState({});
 
   const navigate = useNavigate();
@@ -53,9 +56,17 @@ function Dashboard() {
     }
     navigate("trip-planner");
   };
+    const handleRemoveTrip = (index, id) => {
+      const newTrips = [...trips];
+      newTrips.splice(index, 1);
+      setTrips(newTrips);
+      deleteItem("trip", id);
+   }
+
+
 
   useEffect(() => {
-    getItemsWithFilter("trip", { userId: user.id })
+    getItemsWithFilter("trip", { userId: currentUser })
       .then((response) => {
         setTrips(response.data);
         setIsLoading(false);
@@ -115,10 +126,25 @@ function Dashboard() {
               <div
                 className="filled-card"
                 key={index}
-                onClick={() => handlePlanTrip(index)}
+                // onClick={() => handlePlanTrip(index)}
               >
                 <h2>{trip.tripName}</h2>
+                <button
+                            className="outlined-button edit icon"
+                            onClick={(event) => handlePlanTrip(index)}
+                          >
+                            <MdEdit />
+                </button>
+                <button
+                  className="delete-button icon small-card"
+                  onClick={() =>
+                  handleRemoveTrip(index, trip.id)
+                  }
+                >
+                            <FaTrash />
+                </button>
               </div>
+              
             ))
           ) : (
             <p>You haven't planned any trips yet</p>

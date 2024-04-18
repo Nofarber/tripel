@@ -7,17 +7,20 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { AiFillEye } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
+import { CurrentContext } from "../../context/CurrentContext";
 
 function Login() {
   const { handleSubmit, register } = useForm();
   const { isGuest , setIsGuest , setUser } = useContext(GeneralContext);
   const [passwordShown, setPasswordShown] = useState(false);
+  const { currentUser, setCurrentUser } = useContext(CurrentContext);
   let navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
       const response = await login(data);
       setUser(response.data.user);
+      setCurrentUser(response.data.user.id);
       navigate("/dashboard");
     } catch (error) {
       console.error(error.response.data);
