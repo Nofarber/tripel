@@ -16,18 +16,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import placeholderImage from "../../../../assets/placeholder.jpg";
 
 function EventCard({ event, index, cardType }) {
-  const {
-    isGuest,
-    setUser,
-    events,
-    mapRef,
-    sendToLocation,
-    setEvents,
-    isLoading,
-    setIsLoading,
-    myEvents,
-    setMyEvents,
-  } = useContext(GeneralContext);
+  const { myEvents, setMyEvents } = useContext(GeneralContext);
   const { currentArea } = useContext(CurrentContext);
   const today = new Date();
   const [date, setdate] = useState({
@@ -60,7 +49,6 @@ function EventCard({ event, index, cardType }) {
   };
 
   async function eventRemoveFromTrip(data) {
-    console.log("SUCCESS", data);
     const event = checkEventSelect(data);
     const response = await deleteItem("event", event.id);
     setIsChecked(false);
@@ -74,7 +62,7 @@ function EventCard({ event, index, cardType }) {
       ) : (
         <img src={placeholderImage} alt="Event image" />
       )}
-      <div >
+      <div>
         <div className="info">
           <div className="event-name">
             <h4 className="bold">{event.name}</h4>

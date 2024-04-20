@@ -6,6 +6,7 @@ import useGeoLocation from "../../hooks/useGeoLocation";
 import { GeneralContext } from "../../context/GeneralContext";
 import hotelPNG from "../../assets/image.png";
 import { CurrentContext } from "../../context/CurrentContext";
+import { fetchPlaceLanLon } from "../../utils/MapService";
 
 export default function Map({
   mapType,
@@ -25,6 +26,7 @@ export default function Map({
     setSearch,
     setIsLoading,
     isLoading,
+    sendToLocation,
   } = useContext(GeneralContext);
   const { currentArea } = useContext(CurrentContext);
   const ZOOM_LEVEL = 9;
@@ -76,28 +78,38 @@ export default function Map({
       );
     }
   }
+  async function fetchCourdinents() {
+    const areaCourdinents = await fetchPlaceLanLon(currentArea.areaName);
 
+    mapType === "overview" &&
+      areaCourdinents &&
+      sendToLocation(areaCourdinents.coordinates);
+  }
+
+  // TODO: Set the default values of the dates with the area's dates
   //   to search for the first entered location
   useEffect(() => {
     if (search == "" && mapType != "overview") {
       setIsLoading(true);
-      handleSubmit(currentArea.areaName);
+      setSearch(currentArea.areaName || "")
       setIsLoading(false);
     }
-  }, []);
+    mapType === "overview" && currentArea.areaName && fetchCourdinents();
+  }, [currentArea]);
+
 
   return (
     <>
       {mapType !== "overview" && (
         <div className="map-inputs">
-         <div>
+          <div>
             <input
               type="text"
               placeholder="Enter Location"
-              defaultValue={search == "" ? currentArea?.areaName || "" : search }
+              defaultValue={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-           <div>
+            <div>
               <button
                 className="primary-button"
                 onClick={() => handleSubmit(search)}
@@ -107,12 +119,12 @@ export default function Map({
               <button className="outlined-button" onClick={showMyLocation}>
                 Locate Me
               </button>
-           </div>
-         </div>
+            </div>
+          </div>
 
           {mapType === "hotels" && (
             <div>
-             <label>
+              <label>
                 Check-in
                 <input
                   type="date"
@@ -122,10 +134,14 @@ export default function Map({
                       checkIn: new Date(e.target.value),
                     }))
                   }
-                  defaultValue={today.toISOString().substring(0, 10)}
+                  defaultValue={
+                    currentArea?.minDate
+                      ? currentArea?.minDate.toISOString().substring(0, 10)
+                      : today.toISOString().substring(0, 10)
+                  }
                 />
-             </label>
-             <label>
+              </label>
+              <label>
                 Check-out
                 <input
                   type="date"
@@ -135,9 +151,13 @@ export default function Map({
                       checkOut: new Date(e.target.value),
                     }))
                   }
-                  defaultValue={today.toISOString().substring(0, 10)}
+                  defaultValue={
+                    currentArea?.maxDay
+                      ? currentArea?.maxDay.toISOString().substring(0, 10)
+                      : today.toISOString().substring(0, 10)
+                  }
                 />
-             </label>
+              </label>
             </div>
           )}
         </div>
@@ -174,7 +194,7 @@ export default function Map({
                   icon={hotelIcon}
                   position={[hotel.lat, hotel.long]}
                 >
-                  <Popup>{hotel.name}</Popup>
+                  <Popup>{hotel.hotelName && hotel.hotelName}</Popup>
                 </Marker>
               )
             );
@@ -187,7 +207,7 @@ export default function Map({
               event?.long && (
                 <Marker
                   key={key}
-                  icon={hotelIcon}
+                  icon={eventIcon}
                   position={[event.lat, event.long]}
                 >
                   <Popup>{event && renderIntoPopUp(event)}</Popup>

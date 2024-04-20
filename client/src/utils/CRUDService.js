@@ -30,6 +30,7 @@ export const getItem = async (type, id) => {
 };
 
 export const deleteItem = async (type, id) => {
+  console.log(type, id);
   return axios.delete(
     `${import.meta.env.VITE_API_URL}/${type}/delete/${id}`,
     null
