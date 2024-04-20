@@ -32,7 +32,7 @@ export const CurrentContextProvider = ({ children }) => {
 
   useEffect(() => {
     saveTripLocally({});
-    saveUserLocally({})
+    saveUserLocally("fail")
     const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)");
     if (isDarkMode.matches) {
       setCurrentLogo(darkLogo);
@@ -83,13 +83,13 @@ export const CurrentContextProvider = ({ children }) => {
 
   const saveUserLocally = async (userData) => {
     const myItem = localStorage.getItem("currentUser");
-    if (userData !== 0) {
+    if (userData !=="fail") {
       localStorage.setItem("currentUser", JSON.stringify(userData));
       setCurrentUser(userData);
-    } else if (myItem !== "undefined") {
+    } else if (myItem !== null) {
       const newId = JSON.parse(localStorage.getItem("currentUser"));
-      const response = await getItem("user", newId);
-      setCurrentUser(response.data);
+      const response = await getItem("users", newId);
+      setCurrentUser(response.data.id);
     } 
   }
 
@@ -98,7 +98,7 @@ export const CurrentContextProvider = ({ children }) => {
     if (Object.keys(tripData).length !== 0) {
       localStorage.setItem("currentTrip", JSON.stringify(tripData.id));
       setCurrentTrip(tripData);
-    } else if (myItem !== "undefined") {
+    } else if (myItem !== null) {
       const newId = JSON.parse(localStorage.getItem("currentTrip"));
       const response = await getItem("trip", newId);
       setCurrentTrip(response.data);

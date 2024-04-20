@@ -69,7 +69,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    getItemsWithFilter("trip", { userId: currentUser })
+    getItemsWithFilter("trip", { userId: localStorage.getItem("currentUser" )})
       .then((response) => {
         setTrips(response.data);
         setIsLoading(false);

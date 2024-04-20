@@ -64,10 +64,14 @@ function TripPlanner() {
   const areaStartRef = useRef();
   const areaEndRef = useRef();
 
+
   // USE EFFECTS
   useEffect(() => {
     console.log(flightsAndAreas);
+   
   }, [flightsAndAreas]);
+
+
 
   useEffect(() => {
     if (user.id) {
