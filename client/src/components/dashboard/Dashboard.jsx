@@ -7,6 +7,7 @@ import {
   createItem,
   getItemsWithFilter,
   deleteItem,
+  updateItem,
 } from "../../utils/CRUDService";
 import { CurrentContext } from "../../context/CurrentContext";
 import { MdEdit } from "react-icons/md";
@@ -31,6 +32,7 @@ function Dashboard() {
   const { currentTrip, setCurrentTrip } = useContext(CurrentContext);
   const { currentUser, setCurrentUser } = useContext(CurrentContext);
   const [tripData, setTripData] = useState({});
+  const [currentTripId, setCurrentTripId] = useState();
 
   const navigate = useNavigate();
 
@@ -68,8 +70,18 @@ function Dashboard() {
     deleteItem("trip", id);
   };
 
+  const handleEditTrip = (e) => {
+    e.preventDefault();
+    const tripName = tripInputName.current.value;
+    updateItem("trip", currentTripId, { tripName }).then((response) => {
+      console.log(response);
+      setCurrentTrip(response.data);
+    });
+    closeModal2();
+  };
+
   useEffect(() => {
-    getItemsWithFilter("trip", { userId: localStorage.getItem("currentUser" )})
+    getItemsWithFilter("trip", { userId: localStorage.getItem("currentUser") })
       .then((response) => {
         setTrips(response.data);
         setIsLoading(false);
@@ -81,11 +93,19 @@ function Dashboard() {
   }, [currentTrip]);
 
   const [modalIsOpen, setIsOpen] = React.useState(false);
+  const [modalIsOpen2, setIsOpen2] = React.useState(false);
   function openModal() {
     setIsOpen(true);
   }
+  function openModal2(tripId) {
+    setCurrentTripId(tripId);
+    setIsOpen2(true);
+  }
   function closeModal() {
     setIsOpen(false);
+  }
+  function closeModal2() {
+    setIsOpen2(false);
   }
 
   return (
@@ -128,12 +148,15 @@ function Dashboard() {
               <div
                 className="filled-card"
                 key={index}
-                // onClick={() => handlePlanTrip(index)}
+                onClick={() => handlePlanTrip(index)}
               >
                 <h2>{trip.tripName}</h2>
                 <button
                   className="outlined-button edit icon"
-                  onClick={(event) => handlePlanTrip(index)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    openModal2(trip.id, event);
+                  }}
                 >
                   <MdEdit />
                 </button>
@@ -152,6 +175,24 @@ function Dashboard() {
           <Skeleton count={5} className="filled-card" />
         )}
       </div>
+      <Modal
+        isOpen={modalIsOpen2}
+        onRequestClose={closeModal2}
+        style={customStyles}
+        contentLabel="Edit Trip Data Modal"
+        appElement={document.getElementById("root")}
+      >
+        <form className="modal-form" onSubmit={handleEditTrip}>
+          <input
+            type="text"
+            placeholder="Edit Trip Name..."
+            ref={tripInputName}
+          />
+          <button type="submit" className="primary-button">
+            Submit
+          </button>
+        </form>
+      </Modal>
     </div>
   );
 }
