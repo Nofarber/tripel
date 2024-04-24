@@ -9,9 +9,8 @@
   flex-direction: column;
   align-items: center;
 }
-.trips>* {
+.trips > * {
   width: 80%;
-
 }
 .trip-container {
   cursor: pointer;
@@ -20,6 +19,19 @@
   cursor: pointer;
   border: 0.5rem dashed var(--text);
   background-color: var(--secondary-300);
+}
+
+.trip-buttons {
+  position: absolute;
+  top: 50%;
+  right: 1.5rem;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 1.5rem;
+}
+.trip-buttons > * {
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
 .flight-location-container {
@@ -39,39 +51,47 @@
 .flight-location > * {
   width: calc(100% - 3rem) !important;
 }
-.flight-location-container{
+.flight-location-container {
   /* padding: 1rem 0.5rem  */
 }
 
-.flight-company-img{
+.flight-company-img {
   width: 3vw !important;
   height: 3vh !important;
   padding-right: 3vw !important;
-  object-fit:cover;
+  object-fit: cover;
 }
 
-
-.flight-preview{
+.flight-preview {
   display: flex;
-    gap: 0.5rem;
-    align-items: center;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 @media screen and (max-width: 1135px) {
- 
 }
 @media screen and (max-width: 768px) {
   .flight-location {
     place-items: center;
   }
-  
+  .trip-buttons > * {
+    font-size: 1rem;
+  }
 }
 
 @media screen and (max-width: 500px) {
-
+  .trip-buttons {
+    position: relative;
+    top:auto;
+    right: auto;
+    transform: none;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  .trip-buttons > * {
+    width: 50% !important;
+  }
 }
 
 @media screen and (max-width: 303px) {
-  
-
 }

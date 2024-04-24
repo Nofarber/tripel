@@ -1,10 +1,6 @@
 const Trip = require("../models/tripModel");
 const User = require("../models/userModel");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const secret = process.env.SECRET_KEY;
 
 User.hasMany(Trip, {
   foreignKey: "userId",
@@ -18,15 +14,17 @@ exports.registerTrip = async (req, res) => {
   try {
     const currentUser = await User.findOne({ where: { id: req.params.id } });
     console.log(req.body, req.params.id);
+
     const tripExists = await Trip.findOne({
-      where: { userId: currentUser.id, tripName: req.body.tripName },
+      where: { userId: currentUser.id, tripName: req.body.tripName},
     });
-    if (tripExists) {
-      return res.status(400).json({
-        status: "fail",
-        mesage: "Trip already exists",
-      });
-    }
+    // ? User should be able to create trips with identical names
+    //// if (tripExists) {
+    ////   return res.status(400).json({
+    ////     status: "fail",
+    ////     message: "Trip already exists",
+    ////   });
+    //// }
 
     const newTrip = await Trip.create({
       ...req.body,
@@ -77,6 +75,7 @@ exports.getTripById = async (req, res) => {
 exports.updateTrip = async (req, res) => {
   const tripId = req.params.id;
   const newTrip = req.body;
+  console.log(newTrip);
   try {
     const existingTrip = await Trip.findByPk(tripId);
 
@@ -84,16 +83,16 @@ exports.updateTrip = async (req, res) => {
       return res.status(404).send("trip not found");
     }
 
-    // If the email is being updated, check for duplicates
-    if (newTrip.name && newTrip.name !== existingTrip.name) {
-      const tripExists = await Trip.findOne({ where: { name: newTrip.name } });
-      if (tripExists) {
-        return res.status(401).json({
-          status: "fail",
-          message: "Trip name already exists",
-        });
-      }
-    }
+    // ? User should be able to update the trip name even if it exists
+    //// if (newTrip.name && newTrip.name !== existingTrip.name) {
+    ////   const tripExists = await Trip.findOne({ where: { name: newTrip.name } });
+    ////   if (tripExists) {
+    ////     return res.status(401).json({
+    ////       status: "fail",
+    ////       message: "Trip name already exists",
+    ////     });
+    ////   }
+    //// }
 
     // Update the trip
     if (!existingTrip) {

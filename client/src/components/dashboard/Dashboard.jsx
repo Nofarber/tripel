@@ -30,56 +30,10 @@ function Dashboard() {
   const tripInputName = useRef();
   const tripInputBudget = useRef();
   const { currentTrip, setCurrentTrip } = useContext(CurrentContext);
-  const { currentUser, setCurrentUser } = useContext(CurrentContext);
-  const [tripData, setTripData] = useState({});
-  const [currentTripId, setCurrentTripId] = useState();
-
+  const [tripId, setTripId] = useState();
   const navigate = useNavigate();
 
-  const handleCreateTrip = (e) => {
-    e.preventDefault();
-    console.log(tripData);
-    console.log(
-      tripInputBudget.current.value + "   " + tripInputName.current.value
-    );
-    const tripName = tripInputName.current.value;
-    const Budget = tripInputBudget.current.value;
-    createItem("trip", user.id, { tripName, Budget })
-      .then((response) => {
-        setCurrentTrip(response.data);
-        navigate("trip-planner");
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const handlePlanTrip = async (index) => {
-    console.log(index);
-    if (index === -1) {
-      setCurrentTrip({});
-    } else {
-      const tempTrip = trips[index];
-      console.log(tempTrip);
-      setCurrentTrip(tempTrip);
-    }
-    navigate("trip-planner");
-  };
-  const handleRemoveTrip = (index, id) => {
-    const newTrips = [...trips];
-    newTrips.splice(index, 1);
-    setTrips(newTrips);
-    deleteItem("trip", id);
-  };
-
-  const handleEditTrip = (e) => {
-    e.preventDefault();
-    const tripName = tripInputName.current.value;
-    updateItem("trip", currentTripId, { tripName }).then((response) => {
-      console.log(response);
-      setCurrentTrip(response.data);
-    });
-    closeModal2();
-  };
-
+  //* useEffect
   useEffect(() => {
     getItemsWithFilter("trip", { userId: localStorage.getItem("currentUser") })
       .then((response) => {
@@ -92,20 +46,66 @@ function Dashboard() {
       });
   }, [currentTrip]);
 
+  //* Functions
+
+  // Handles trip submissions
+  const handleTripSubmit = (event) => {
+    event.preventDefault();
+    const tripName = tripInputName.current.value;
+    const budget = tripInputBudget.current.value;
+    //  If the trip exists then...
+    if (tripId) {
+      // Update trip
+      updateItem("trip", tripId, { tripName, budget })
+        .then((response) => {
+          setCurrentTrip(response.data);
+          closeModal();
+        })
+        .catch((err) => console.log(err));
+      // Else...
+    } else {
+      // Create a new trip
+      createItem("trip", user.id, { tripName, budget })
+        .then((response) => {
+          setCurrentTrip(response.data);
+          navigate("trip-planner");
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  // Enter into the trip-planner
+  const handlePlanTrip = async (index) => {
+    console.log(index);
+    if (index === -1) {
+      setCurrentTrip({});
+    } else {
+      const tempTrip = trips[index];
+      console.log(tempTrip);
+      setCurrentTrip(tempTrip);
+    }
+    navigate("trip-planner");
+  };
+
+  // Removes selected trip
+  const handleRemoveTrip = (index, id) => {
+    const newTrips = [...trips];
+    newTrips.splice(index, 1);
+    setTrips(newTrips);
+    deleteItem("trip", id);
+  };
+
+  // Modal functions
   const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [modalIsOpen2, setIsOpen2] = React.useState(false);
-  function openModal() {
+  function openModal(trip) {
+    setCurrentTrip(trip);
+    setTripId(trip.id || null);
     setIsOpen(true);
   }
-  function openModal2(tripId) {
-    setCurrentTripId(tripId);
-    setIsOpen2(true);
-  }
   function closeModal() {
+    setCurrentTrip(null);
+    setTripId(null);
     setIsOpen(false);
-  }
-  function closeModal2() {
-    setIsOpen2(false);
   }
 
   return (
@@ -113,34 +113,6 @@ function Dashboard() {
       <div className="dashed-card" onClick={openModal}>
         <p>Start A New Trip</p>
       </div>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customStyles}
-        contentLabel="Choose Trip Data Modal"
-        appElement={document.getElementById("root")}
-      >
-        <form className="modal-form" onSubmit={handleCreateTrip}>
-          <input
-            type="text"
-            placeholder="Enter Trip Name..."
-            ref={tripInputName}
-          />
-          <input
-            type="number"
-            placeholder="Enter Budget..."
-            ref={tripInputBudget}
-          />
-          <div className="modal-buttons">
-            <button onClick={closeModal} className="outlined-button">
-              Cancel
-            </button>
-            <button type="submit" className="primary-button">
-              Submit
-            </button>
-          </div>
-        </form>
-      </Modal>
       <div className="trips">
         {!isLoading ? (
           trips.length > 0 ? (
@@ -151,21 +123,26 @@ function Dashboard() {
                 onClick={() => handlePlanTrip(index)}
               >
                 <h2>{trip.tripName}</h2>
-                <button
-                  className="outlined-button edit icon"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    openModal2(trip.id, event);
-                  }}
-                >
-                  <MdEdit />
-                </button>
-                <button
-                  className="delete-button icon small-card"
-                  onClick={() => handleRemoveTrip(index, trip.id)}
-                >
-                  <FaTrash />
-                </button>
+                <div className="trip-buttons">
+                  <button
+                    className="outlined-button icon"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      openModal(trip);
+                    }}
+                  >
+                    <MdEdit />
+                  </button>
+                  <button
+                    className="delete-button icon"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleRemoveTrip(index, trip.id);
+                    }}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
               </div>
             ))
           ) : (
@@ -176,21 +153,33 @@ function Dashboard() {
         )}
       </div>
       <Modal
-        isOpen={modalIsOpen2}
-        onRequestClose={closeModal2}
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
         style={customStyles}
-        contentLabel="Edit Trip Data Modal"
+        contentLabel="Choose Trip Data Modal"
         appElement={document.getElementById("root")}
       >
-        <form className="modal-form" onSubmit={handleEditTrip}>
+        <form className="modal-form" onSubmit={handleTripSubmit}>
           <input
             type="text"
-            placeholder="Edit Trip Name..."
+            placeholder="Enter Trip Name..."
             ref={tripInputName}
+            defaultValue={currentTrip.tripName || ""}
           />
-          <button type="submit" className="primary-button">
-            Submit
-          </button>
+          <input
+            type="number"
+            placeholder="Enter Budget..."
+            ref={tripInputBudget}
+            defaultValue={currentTrip.budget || ""}
+          />
+          <div className="modal-buttons">
+            <button onClick={closeModal} className="outlined-button">
+              Cancel
+            </button>
+            <button type="submit" className="primary-button">
+              Submit
+            </button>
+          </div>
         </form>
       </Modal>
     </div>

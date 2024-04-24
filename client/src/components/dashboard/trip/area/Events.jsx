@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { checkForUser, logout } from "../../../../utils/AuthService";
 import { GeneralContext } from "../../../../context/GeneralContext";
 import { fetchPlace, fetchPlaceLanLon } from "../../../../utils/MapService";
-import eventlPNG from "../../../../assets/event.png";
+import eventPNG from "../../../../assets/event.png";
 import Map from "../../../general/Map";
 import Skeleton from "react-loading-skeleton";
 import { createItem ,getItemsWithFilter, deleteItem} from "../../../../utils/CRUDService";
@@ -31,6 +31,7 @@ function Events() {
     checkIn: today.toISOString().substring(0, 10),
     checkOut: today.toISOString().substring(0, 10),
   });
+  
   
   useEffect(() => {
     setEvents(JSON.parse(localStorage.getItem("eventsDisplay")));
@@ -90,7 +91,7 @@ function Events() {
             sendToLocation={sendToLocation}
             setdate={setdate}
             today={today}
-            PNG={eventlPNG}
+            PNG={eventPNG}
           />
         </div>
       </div>
