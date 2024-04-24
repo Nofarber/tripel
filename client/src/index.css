@@ -171,6 +171,7 @@ a:focus-visible {
   flex-direction: column;
   align-items: flex-start;
 } */
+
 .cards-container-center {
   display: flex;
   flex-direction: column;

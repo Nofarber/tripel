@@ -1,10 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { checkForUser, logout } from "../../../../utils/AuthService";
 import { GeneralContext } from "../../../../context/GeneralContext";
-import { fetchPlace, fetchPlaceLanLon } from "../../../../utils/MapService";
-import eventlPNG from "../../../../assets/event.png";
-import Map from "../../../general/Map";
-import Skeleton from "react-loading-skeleton";
 import {
   createItem,
   getItemsWithFilter,
@@ -25,20 +20,34 @@ function EventCard({ event, index, cardType }) {
   });
   const [isChecked, setIsChecked] = useState(false);
 
+  // useEffect
   useEffect(() => {
     const response = checkEventSelect(event);
     setIsChecked(response);
   }, []);
 
+  // Functions
+    // Fetch marked events within the area
+  async function fetchMyEvents() {
+    getItemsWithFilter("event", { areaId: currentArea.id })
+      .then((response) => {
+        setMyEvents(response.data);
+      })
+      .catch((err) => console.error(err));
+  }
+
+    // Assign event to an area
   async function eventAddToTrip(data) {
     const response = await createItem("event", currentArea.id, {
       eventName: data.name,
       eventInfo: JSON.stringify(data),
     });
     setIsChecked(response.data);
+    fetchMyEvents()
     console.log(response);
   }
-
+  
+    // Check if an event is assigned
   const checkEventSelect = (data) => {
     for (const event of myEvents) {
       if (event.eventName === data.name) {
@@ -47,14 +56,17 @@ function EventCard({ event, index, cardType }) {
     }
     return false;
   };
-
+  
+    // Unassign event from an area
   async function eventRemoveFromTrip(data) {
     const event = checkEventSelect(data);
     const response = await deleteItem("event", event.id);
     setIsChecked(false);
+    fetchMyEvents()
     console.log(response);
   }
 
+  
   return (
     <div key={index} className={`${cardType} event-card`}>
       {event.image ? (
