@@ -27,6 +27,7 @@ export async function fetchNearHotels(region_id, data) {
     const { checkIn, checkOut } = data;
     // let checkInB = parse(checkIn, "MM-dd-yy", new Date());
     // let checkOutB = parse(checkOut, "MM-dd-yy", new Date());
+    console.log(checkIn);
     const checkInB = format(checkIn, "yyyy-MM-dd");
     const checkOutB = format(checkOut, "yyyy-MM-dd");
 
