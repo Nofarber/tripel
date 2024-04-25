@@ -79,22 +79,30 @@ export default function Map({
       );
     }
   }
-  async function fetchCourdinents() {
-    const areaCourdinents = await fetchPlaceLanLon(currentArea.areaName);
+  async function fetchCoordinates() {
+    const areaCoordinates = await fetchPlaceLanLon(currentArea.areaName);
 
     mapType === "overview" &&
-      areaCourdinents &&
-      sendToLocation(areaCourdinents.coordinates);
+      areaCoordinates &&
+      sendToLocation(areaCoordinates.coordinates);
   }
 
-  // TODO: Set the default values of the dates with the area's dates
   //   to search for the first entered location
   useEffect(() => {
-    if (mapType != "overview"&&currentArea?.areaName||search !== "") {
-      handleSubmit(currentArea.areaName)
+    if (search == "" && mapType != "overview") {
+      setIsLoading(true);
+      setSearch(currentArea.areaName || "")
+      setIsLoading(false);
     }
-    mapType === "overview" && currentArea.areaName && fetchCourdinents();
-  }, [currentArea]);
+
+    mapType === "overview" && currentArea.areaName && fetchCoordinates();
+    
+    // Resets the search on unmount
+    return () => {
+    setSearch("")
+    };
+    
+    }, [currentArea]);
 
 
   return (
@@ -152,8 +160,8 @@ export default function Map({
                   }
                   defaultValue={
                     currentArea?.maxDay
-                      ? currentArea?.maxDay.toISOString().substring(0, 10)
-                      : today.toISOString().substring(0, 10)
+                      ? addDays( currentArea?.maxDay,1).toISOString().substring(0, 10)
+                      : addDays( today,1).toISOString().substring(0, 10)
                   }
                 />
               </label>
