@@ -43,8 +43,8 @@ function Hotels() {
       ? addDays( currentArea?.minDate,1).toISOString().substring(0, 10)
       : today.toISOString().substring(0, 10),
     checkOut: currentArea?.maxDay
-      ? currentArea?.maxDay.toISOString().substring(0, 10)
-      : today.toISOString().substring(0, 10),
+      ? addDays( currentArea?.maxDay,1).toISOString().substring(0, 10)
+      : addDays( today,1).toISOString().substring(0, 10)
   });
   
 
