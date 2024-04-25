@@ -7,6 +7,7 @@ import { GeneralContext } from "../../context/GeneralContext";
 import hotelPNG from "../../assets/image.png";
 import { CurrentContext } from "../../context/CurrentContext";
 import { fetchPlaceLanLon } from "../../utils/MapService";
+import { addDays } from "date-fns";
 
 export default function Map({
   mapType,
@@ -89,10 +90,8 @@ export default function Map({
   // TODO: Set the default values of the dates with the area's dates
   //   to search for the first entered location
   useEffect(() => {
-    if (search == "" && mapType != "overview") {
-      setIsLoading(true);
-      setSearch(currentArea.areaName || "")
-      setIsLoading(false);
+    if (mapType != "overview"&&currentArea?.areaName||search !== "") {
+      handleSubmit(currentArea.areaName)
     }
     mapType === "overview" && currentArea.areaName && fetchCourdinents();
   }, [currentArea]);
@@ -131,12 +130,12 @@ export default function Map({
                   onChange={(e) =>
                     setdate((date) => ({
                       ...date,
-                      checkIn: new Date(e.target.value),
+                      checkIn: new Date(e.target.value)
                     }))
                   }
                   defaultValue={
                     currentArea?.minDate
-                      ? currentArea?.minDate.toISOString().substring(0, 10)
+                      ? addDays( currentArea?.minDate,1).toISOString().substring(0, 10)
                       : today.toISOString().substring(0, 10)
                   }
                 />

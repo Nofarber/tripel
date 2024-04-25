@@ -12,7 +12,7 @@ import HotelCard from "./HotelCard";
 import { getItemsWithFilter } from "../../../../utils/CRUDService";
 import { CurrentContext } from "../../../../context/CurrentContext";
 import Modal from "react-modal";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 
 const customStyles = {
   content: {
@@ -31,6 +31,7 @@ function Hotels() {
     setHotels,
     setMyHotels,
     mapRef,
+    myHotels,
     sendToLocation,
     isLoading,
     setIsLoading,
@@ -39,12 +40,13 @@ function Hotels() {
   const today = new Date();
   const [date, setdate] = useState({
     checkIn: currentArea?.minDate
-      ? currentArea?.minDate.toISOString().substring(0, 10)
+      ? addDays( currentArea?.minDate,1).toISOString().substring(0, 10)
       : today.toISOString().substring(0, 10),
     checkOut: currentArea?.maxDay
       ? currentArea?.maxDay.toISOString().substring(0, 10)
       : today.toISOString().substring(0, 10),
   });
+  
 
   // useEffect
   useEffect(() => {
@@ -52,8 +54,10 @@ function Hotels() {
     hotels && setIsLoading(false);
     getItemsWithFilter("hotel", { areaId: currentArea.id })
       .then((response) => {
+        console.log(response.data);
         setMyHotels(response.data);
       })
+
       .catch((err) => console.error(err));
   }, [currentArea]);
 
