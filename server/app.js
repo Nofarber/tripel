@@ -15,7 +15,7 @@ const dayRoutes = require('./routes/dayRoutes')
 const getHotelRoute = require('./routes/getHotelRoutes')
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174","https://tripel.netlify.app/"],
+  origin: ["http://localhost:5173", "http://localhost:5174","https://tripel.netlify.app"],
   credentials: true,
 };
 
